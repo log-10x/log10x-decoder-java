@@ -1,0 +1,20 @@
+pluginManagement {
+	plugins {
+        id "com.github.johnrengelman.shadow" version getProperty('shadowGradlePluginVersion')
+        id "org.mikeneck.graalvm-native-image" version getProperty('mikeneckGraalVMPluginVersion')
+        id "io.github.gradle-nexus.publish-plugin" version getProperty('nexusPublishPluginVersion')
+    }
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'log10x-decoder-java'
+
+includeProjects()
+
+def includeProjects() {
+	include ":log10x-decoder-core"
+	include ":log10x-decoder-cli"
+}

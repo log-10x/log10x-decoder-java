@@ -1,0 +1,9 @@
+ext {
+	PUBLISH_ARTIFACT_DESC = "Core Log10x Java decoder library"
+}
+
+dependencies {
+	implementation "org.unbescape:unbescape:${unbescapeVersion}"
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

@@ -1,0 +1,50 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+afterEvaluate {
+	publishing {
+		publications {
+			release(MavenPublication) {
+				from components.java
+
+				pom {
+					name = project.name
+					description = PUBLISH_ARTIFACT_DESC
+
+					url = 'https://github.com/log-10x/log10x-decoder-java'
+					licenses {
+						license {
+							name = 'The Apache License, Version 2.0'
+							url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+						}
+					}
+					developers {
+						developer {
+							id = 'log10x'
+							name = 'Log10x'
+							email = 'dev@log10x.com'
+							organization = 'Log10x Inc'
+							organizationUrl = 'https://log10x.com'
+						}
+					}
+					scm {
+						connection = 'scm:git:git://github.com/log-10x/log10x-decoder-java.git'
+						developerConnection = 'scm:git:ssh://github.com:log-10x/log10x-decoder-java.git'
+						url = 'https://github.com/log-10x/log10x-decoder-java/tree/main'
+					}
+				}
+			}
+		}
+	}
+}
+
+signing {
+	def signingKey = project.findProperty("signingKey") ?: System.getenv("SIGNING_KEY")
+	def signingPassword = project.findProperty("signingPassword") ?: System.getenv("SIGNING_PASSWORD")
+
+	if (signingKey && signingPassword) {
+		useInMemoryPgpKeys(signingKey, signingPassword)
+	}
+
+	sign publishing.publications
+}
