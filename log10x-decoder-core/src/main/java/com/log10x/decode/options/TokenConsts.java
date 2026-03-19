@@ -26,6 +26,8 @@ class TokenConsts {
 	protected static final char SINGLE_QUOTE_DELIM = '\'';
 	protected static final char DOUBLE_QUOTE_DELIM = '"';
 	protected static final char DOLLAR_SIGN_DELIM = '$';
+	protected static final char AT_DELIM = '@';
+	protected static final char PERCENT_DELIM = '%';
 
 	protected static final char TEMPLATE_VAR = '$';
 	protected static final String TEMPLATE_VAR_STR = String.valueOf(TEMPLATE_VAR);
@@ -61,6 +63,8 @@ class TokenConsts {
 		DOUBLE_QUOTE_DELIM,
 		DOLLAR_SIGN_DELIM,
 		TAB,
-		BREAK
+		BREAK,
+		AT_DELIM,
+		PERCENT_DELIM
 	});
 }
