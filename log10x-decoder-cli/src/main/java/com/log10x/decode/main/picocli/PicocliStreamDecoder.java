@@ -33,12 +33,40 @@ public class PicocliStreamDecoder implements Callable<Integer> {
 	@Option(names = { "-o", "--output" }, description = "Output file. If omitted, will write to stdout")
 	private File outputFile;
 
+	@Option(names = { "-d", "--delimiter" }, description = "Value delimiter character (default: space). Use 'comma' for ','")
+	private String delimiter;
+
+	@Option(names = { "-p", "--prefix" }, description = "Encoded line prefix character (default: none). e.g. '~'")
+	private String prefix;
+
+	@Option(names = { "-z", "--timezone" }, description = "Timezone for timestamp decoding (default: system). e.g. 'UTC', 'America/New_York'")
+	private String timezone;
+
 	@Override
 	public Integer call() throws Exception {
 
+		char delimChar = ' ';
+		char prefixChar = (char) 0;
+
+		if (delimiter != null) {
+			if ("comma".equalsIgnoreCase(delimiter) || ",".equals(delimiter)) {
+				delimChar = ',';
+			} else if (delimiter.length() == 1) {
+				delimChar = delimiter.charAt(0);
+			}
+		}
+
+		if (prefix != null && prefix.length() == 1) {
+			prefixChar = prefix.charAt(0);
+		}
+
+		EventEncodeOptions eventOptions = new EventEncodeOptions(prefixChar, delimChar);
+
+		TimestampOptions timestampOptions = new TimestampOptions(timezone);
+
 		TokenizeContext context = TokenizeContext.create(
-				new TokenOptions(), new TimestampOptions(),
-				new TemplateEncodeOptions(), new EventEncodeOptions());
+				new TokenOptions(), timestampOptions,
+				new TemplateEncodeOptions(), eventOptions);
 
 		TemplateProvider provider = TemplateProvider.fromFile(context, templatesFileName, true);
 

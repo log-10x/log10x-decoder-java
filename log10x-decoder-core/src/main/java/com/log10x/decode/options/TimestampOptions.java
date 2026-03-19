@@ -42,8 +42,19 @@ public class TimestampOptions {
 	}
 
 	/**
+	 * Creates an instance with default timestamp patterns and a custom zone.
+	 *
+	 * @param zone A {@link ZoneId} as a {@link String}, or {@code null} for
+	 *             system default.
+	 */
+	public TimestampOptions(String zone) {
+
+		this(TimestampConsts.DEFAULT_TIMESTAMP_PATTERNS, zone);
+	}
+
+	/**
 	 * Creates an instance with custom timestamp patterns and zone.
-	 * 
+	 *
 	 * @param patterns A {@link Set} containing all timestamp patterns.
 	 * @param zone     A {@link ZoneId} as a {@link String}
 	 */
@@ -100,6 +111,11 @@ public class TimestampOptions {
 
 		if (pattern.contentEquals(EpochMilliTimestamp.EPOCH)) {
 			return EpochMilliTimestamp.Instance;
+		}
+
+		String patternStr = pattern.asString();
+		if (patternStr.equals("+%s") || patternStr.equals("+%s.%N")) {
+			return new EpochMilliTimestamp(patternStr);
 		}
 
 		FormatterTimestamp existing = patternsMap.get(pattern);

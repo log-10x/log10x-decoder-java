@@ -1,13 +1,9 @@
 package com.log10x.decode.template;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.unbescape.json.JsonEscape;
 
 import com.log10x.decode.lexer.BaseLexer;
 import com.log10x.decode.lexer.TokenType;
@@ -24,7 +20,6 @@ import com.log10x.decode.util.StringUtil;
 import com.log10x.decode.util.ToString;
 import com.log10x.decode.util.chars.CharArraySequence;
 import com.log10x.decode.util.chars.CharArraySubSequence;
-import com.log10x.decode.util.chars.DirectCharArrayWriter;
 
 /**
  * Main class for lexing and decoding templates.
@@ -47,7 +42,6 @@ public class TemplateLexer extends BaseLexer {
 	private static final Segment[] EMPTY_SEGMENT_ARRAY = new Segment[0];
 
 	private static final int MINUS_ONE_LEN = String.valueOf(-1).length();
-	private static final char JSON_ESCAPE = '\\';
 
 	protected char currChar;
 	protected int currCharIndex;
@@ -157,7 +151,9 @@ public class TemplateLexer extends BaseLexer {
 
 		String timestampPostfix = templateEncodeOptions().timestampPostfix();
 
-		for (int i = this.currCharIndex + prefixLen; i < end; i++) {
+		int startFrom = this.currCharIndex + prefixLen;
+
+		for (int i = startFrom; i < end; i++) {
 
 			if (StringUtil.regionMatches(this.chars, i, timestampPostfix)) {
 
@@ -183,7 +179,7 @@ public class TemplateLexer extends BaseLexer {
 
 			if (tokenOptions().isTokenDelim(c)) {
 
-				if (isCurrVar) {
+				if ((isCurrVar) && (i != startFrom)) {
 					tokenSize++;
 				}
 
@@ -498,31 +494,23 @@ public class TemplateLexer extends BaseLexer {
 
 			int tokenEnd = endTokenStart + endTokenLen;
 
-			boolean jsonEscape = false;
 			boolean escaped = false;
 
-			for (int i = tokenStart; i < tokenEnd; i++) {
+			for (int i = tokenStart; i < tokenEnd - 1; i++) {
 
 				char c = chars[i];
 
-				if (c == JSON_ESCAPE) {
-					jsonEscape = true;
+				if (c != TemplateEncodeOptions.VAR_ESCAPE) {
+					continue;
 				}
 
-				if (i < tokenEnd - 1) {
+				char n = chars[i + 1];
 
-					if (c != TemplateEncodeOptions.VAR_ESCAPE) {
-						continue;
-					}
+				if ((n == TemplateEncodeOptions.VAR_ESCAPE) ||
+					(n == templateEncodeOptions().varPlaceholder())) {
 
-					char n = chars[i + 1];
-
-					if ((n == TemplateEncodeOptions.VAR_ESCAPE) ||
-						(n == templateEncodeOptions().varPlaceholder())) {
-
-						escaped = true;
-						break;
-					}
+					escaped = true;
+					break;
 				}
 			}
 
@@ -539,22 +527,7 @@ public class TemplateLexer extends BaseLexer {
 				value = chars;
 			}
 
-			if (jsonEscape) {
-
-				DirectCharArrayWriter writer = new DirectCharArrayWriter(length);
-
-				try {
-					JsonEscape.unescapeJson(value, start, length, writer);
-				} catch (IOException e) {
-					throw new UncheckedIOException(e);
-				}
-
-				segments.add(new PatternSegment(writer.buf(), 0, writer.size()));
-
-			} else {
-
-				segments.add(new PatternSegment(value, start, length));
-			}
+			segments.add(new PatternSegment(value, start, length));
 
 		} else if (type == SegmentType.Var) {
 

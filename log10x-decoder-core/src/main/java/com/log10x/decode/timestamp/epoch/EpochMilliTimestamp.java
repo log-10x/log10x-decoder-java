@@ -25,4 +25,8 @@ public class EpochMilliTimestamp extends EpochTimestamp {
 	private EpochMilliTimestamp() {
 		super(EPOCH);
 	}
+
+	public EpochMilliTimestamp(String pattern) {
+		super(pattern);
+	}
 }

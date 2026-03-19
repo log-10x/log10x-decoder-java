@@ -45,21 +45,30 @@ public class StreamDecoder {
 	public static boolean decode(TokenizeContext context, TemplateProvider templateProvider, InputStream in,
 			OutputStream out) {
 
+		char delimiter = context.eventOptions().encodeDelimiter();
+		char prefix = context.eventOptions().encodedLinePrefix();
+
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, Charset.defaultCharset()));
 				BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 
 			for (String line; (line = br.readLine()) != null;) {
 
-				int index = line.indexOf(' ');
+				// Strip prefix if configured
+				String working = line;
+				if (prefix != 0 && working.length() > 0 && working.charAt(0) == prefix) {
+					working = working.substring(1);
+				}
+
+				int index = working.indexOf(delimiter);
 
 				String hash;
 				String encodedLine;
 
 				if (index > -1) {
-					hash = line.substring(0, index);
-					encodedLine = line.substring(index + 1);
+					hash = working.substring(0, index);
+					encodedLine = working.substring(index + 1);
 				} else {
-					hash = line;
+					hash = working;
 					encodedLine = "";
 				}
 

@@ -3,6 +3,7 @@ package com.log10x.decode.timestamp;
 import java.io.Writer;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -63,7 +64,12 @@ public class FormatterTimestamp extends Timestamp {
 						.parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0);
 			}
 
-			this.formatter = builder.toFormatter().withZone(zoneId);
+			String p = pattern();
+			ZoneId effectiveZone = (p.contains("Z") || p.contains("X")) ?
+				ZoneOffset.UTC :
+				this.zoneId;
+
+			this.formatter = builder.toFormatter().withZone(effectiveZone);
 		}
 
 		return this.formatter;
