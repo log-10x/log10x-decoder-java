@@ -81,6 +81,10 @@ cat encoded.log | log10x-decode -t templates.json
 ./gradlew :log10x-decoder-cli:nativeImage
 ```
 
+## Also Available
+
+- **JavaScript** — [log10x-decoder-js](https://github.com/log-10x/log10x-decoder-js) — Browser and Node.js, npm
+
 ## Documentation
 
 - [Log10x Documentation](https://doc.log10x.com)
