@@ -4,6 +4,8 @@ plugins {
 	id "org.mikeneck.graalvm-native-image"
 }
 
+version = System.getenv("LOG10X_DECODER_CLI_VERSION") ?: "0.0.0-SNAPSHOT"
+
 dependencies {
 	implementation "ch.qos.logback:logback-classic:${logbackVersion}"
 	implementation "org.unbescape:unbescape:${unbescapeVersion}"

@@ -26,8 +26,6 @@ subprojects {
 	targetCompatibility = 1.8
 
 	group = "com.log10x"
-	version = "0.9.0"
-
 	repositories {
 		mavenCentral()
 	}

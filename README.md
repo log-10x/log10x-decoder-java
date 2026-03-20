@@ -20,14 +20,14 @@ Java library and CLI tool for decoding [Log10x-encoded](https://doc.log10x.com/r
 <dependency>
     <groupId>com.log10x</groupId>
     <artifactId>log10x-decoder-core</artifactId>
-    <version>0.9.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.log10x:log10x-decoder-core:0.9.0'
+implementation 'com.log10x:log10x-decoder-core:1.0.0'
 ```
 
 ## Usage
@@ -79,6 +79,35 @@ cat encoded.log | log10x-decode -t templates.json
 
 ```bash
 ./gradlew :log10x-decoder-cli:nativeImage
+```
+
+## Publishing to Maven Central
+
+Releases are published via GitHub Actions, triggered by pushing git tags.
+
+Each module has its own tag suffix and workflow:
+
+| Module | Tag format | Workflow |
+|--------|-----------|----------|
+| `log10x-decoder-core` | `v{version}-core` | `publish-core.yml` |
+| `log10x-decoder-cli` | `v{version}-cli` | `publish-cli.yml` |
+
+The version is extracted from the tag automatically (e.g., tag `v1.0.0-core` publishes version `1.0.0`).
+
+**Core must be published before CLI**, since the CLI pulls core from Maven Central as a dependency. Wait for core to appear on [Maven Central](https://central.sonatype.com/artifact/com.log10x/log10x-decoder-core) before tagging CLI.
+
+### Release steps
+
+```bash
+# 1. Tag and push core
+git tag v1.0.0-core
+git push origin v1.0.0-core
+
+# 2. Wait for core to appear on Maven Central (~10-30 min)
+
+# 3. Tag and push CLI
+git tag v1.0.0-cli
+git push origin v1.0.0-cli
 ```
 
 ## Also Available
