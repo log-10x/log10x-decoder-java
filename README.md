@@ -138,7 +138,7 @@ This repository contains a decoder library for Log10x-encoded events. While the 
 - A valid Log10x license is required to run the Edge Optimizer
 
 **Get Started:**
-- [Log10x Pricing](https://log10x.com/pricing)
+- [Log10x Pricing](https://www.log10x.com/pricing?utm_source=github&utm_medium=readme&utm_campaign=log10x-decoder-java&utm_content=footer)
 - [Documentation](https://doc.log10x.com)
 - [Contact Sales](mailto:sales@log10x.com)
 
