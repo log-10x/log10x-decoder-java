@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/com.log10x/log10x-decoder-core.svg)](https://central.sonatype.com/artifact/com.log10x/log10x-decoder-core)
 
-Java library and CLI tool for decoding [Log10x-encoded](https://doc.log10x.com/run/transform/#encoding) log events back to their original form. Log10x losslessly compacts log events by extracting recurring structure into templates and storing only the variable values — this library reverses that process.
+Java library and CLI tool for decoding [Log10x-encoded](https://doc.log10x.com/run/transform/#encoding) log events back to their original form. [Log10x](https://www.log10x.com/?utm_source=github&utm_medium=readme&utm_campaign=log10x-decoder-java&utm_content=hero) losslessly compacts log events by extracting recurring structure into templates and storing only the variable values — this library reverses that process.
 
 ## Modules
 
