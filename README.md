@@ -1,6 +1,6 @@
 # Log10x Decoder for Java
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Maven Central](https://img.shields.io/maven-central/v/com.log10x/log10x-decoder-core.svg)](https://central.sonatype.com/artifact/com.log10x/log10x-decoder-core)
 
 Java library and CLI tool for decoding [Log10x-encoded](https://doc.log10x.com/run/transform/#encoding) log events back to their original form. [Log10x](https://www.log10x.com/?utm_source=github&utm_medium=readme&utm_campaign=log10x-decoder-java&utm_content=hero) losslessly compacts log events by extracting recurring structure into templates and storing only the variable values — this library reverses that process.
@@ -121,7 +121,7 @@ git push origin v1.0.0-cli
 
 ## License
 
-This repository is licensed under the [Apache License 2.0](LICENSE).
+This repository is licensed under the [MIT License](LICENSE).
 
 ### Important: Log10x Product License Required
 
@@ -129,7 +129,7 @@ This repository contains a decoder library for Log10x-encoded events. While the 
 
 | Component | License |
 |-----------|---------|
-| This repository (decoder library & CLI) | Apache 2.0 (open source) |
+| This repository (decoder library & CLI) | MIT (open source) |
 | Log10x Edge Optimizer | Commercial license required |
 
 **What this means:**
