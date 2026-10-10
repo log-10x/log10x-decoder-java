@@ -125,17 +125,17 @@ This repository is licensed under the [MIT License](LICENSE).
 
 ### Important: Log10x Product License Required
 
-This repository contains a decoder library for Log10x-encoded events. While the decoder itself is open source, **using the Log10x Edge Optimizer to encode events requires a commercial license**.
+This repository contains a decoder library for Log10x-encoded events. While the decoder itself is open source, **using the 10x Engine to encode events requires a commercial license**.
 
 | Component | License |
 |-----------|---------|
 | This repository (decoder library & CLI) | MIT (open source) |
-| Log10x Edge Optimizer | Commercial license required |
+| The 10x Engine | Commercial license required |
 
 **What this means:**
 - You can freely use, modify, and distribute this decoder
-- The Log10x Edge Optimizer that generates encoded events requires a paid subscription
-- A valid Log10x license is required to run the Edge Optimizer
+- The 10x Engine that generates encoded events requires a paid subscription
+- A valid Log10x license is required to run the 10x Engine
 
 **Get Started:**
 - [Log10x Pricing](https://www.log10x.com/pricing?utm_source=github&utm_medium=readme&utm_campaign=log10x-decoder-java&utm_content=footer)
