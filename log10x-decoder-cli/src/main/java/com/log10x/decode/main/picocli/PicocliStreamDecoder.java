@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.log10x.decode.lexer.TokenizeContext;
 import com.log10x.decode.main.stream.StreamDecoder;
 import com.log10x.decode.main.template.TemplateProvider;
@@ -23,6 +26,8 @@ import picocli.CommandLine.Option;
  *
  */
 public class PicocliStreamDecoder implements Callable<Integer> {
+
+	private static final Logger logger = LoggerFactory.getLogger(PicocliStreamDecoder.class);
 
 	@Option(names = { "-t", "--templates" }, required = true, description = "Log10x templates file used to decode with")
 	private String templatesFileName;
@@ -67,6 +72,15 @@ public class PicocliStreamDecoder implements Callable<Integer> {
 		TokenizeContext context = TokenizeContext.create(
 				new TokenOptions(), timestampOptions,
 				new TemplateEncodeOptions(), eventOptions);
+
+		// A templates file that cannot be read fails the run with exit status 1,
+		// as an input file that cannot be read does, instead of decoding nothing.
+		File templatesFile = new File(templatesFileName);
+
+		if ((!templatesFile.isFile()) || (!templatesFile.canRead())) {
+			logger.error("Cannot read the templates file {}.", templatesFileName);
+			return 1;
+		}
 
 		TemplateProvider provider = TemplateProvider.fromFile(context, templatesFileName, true);
 
