@@ -29,6 +29,8 @@ import com.log10x.decode.util.chars.CharArraySubSequence;
  */
 public class TemplateLexer extends BaseLexer {
 
+	private static final char CARRIAGE_RETURN = '\r';
+
 	private static enum CharState {
 		DELIM_CHAR,
 		SYMBOL_CHAR,
@@ -231,8 +233,12 @@ public class TemplateLexer extends BaseLexer {
 
 				break;
 
-			} else if (tokenOptions().isTokenDelim(nextChar)) {
+			} else if ((tokenOptions().isTokenDelim(nextChar)) ||
+				(nextChar == CARRIAGE_RETURN)) {
 
+				// A grouped event's template joins its lines with CR LF where the
+				// original had them, so a value that ends a line is followed by CR,
+				// which is no token delimiter.
 				if (varNameBuilder.length() == 0) {
 					result = CharState.NON_INDEXED_VAR;
 				}
