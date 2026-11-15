@@ -53,9 +53,17 @@ public class StreamDecoder {
 
 			for (String line; (line = br.readLine()) != null;) {
 
+				// A line that does not begin with the prefix is not encoded and passes through
+				// untouched (FORMAT_SPEC S4.1), with no template lookup and no warning.
+				if (prefix != 0 && (line.isEmpty() || line.charAt(0) != prefix)) {
+					writer.write(line);
+					writer.newLine();
+					continue;
+				}
+
 				// Strip prefix if configured
 				String working = line;
-				if (prefix != 0 && working.length() > 0 && working.charAt(0) == prefix) {
+				if (prefix != 0) {
 					working = working.substring(1);
 				}
 
