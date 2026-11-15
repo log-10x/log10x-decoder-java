@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.log10x.decode.lexer.TokenizeContext;
 import com.log10x.decode.template.Template;
 import com.log10x.decode.template.TemplateLexer;
@@ -134,13 +135,30 @@ public class TemplateProvider {
 		Map<String, String> result = new HashMap<>();
 
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+			int lineNumber = 0;
+
 			for (String line; (line = br.readLine()) != null;) {
+				lineNumber++;
+
+				// A blank line holds no template.
+				if (line.trim().isEmpty()) {
+					continue;
+				}
+
 				TemplateEntry entry;
 
+				// A line that is not a template entry is skipped with a warning, and
+				// the lines after it are still read.
 				try {
-					entry = TemplateEntry.fromJson(line);
+					entry = TemplateEntry.parse(line);
 				} catch (Exception e) {
-					logger.warn("Non matching template entry line - {}.", line, e);
+					logger.warn("Skipped line {} of {}: not a template entry ({}).", lineNumber, filename,
+							(e instanceof JsonProcessingException) ? ((JsonProcessingException) e).getOriginalMessage() : e.toString());
+					continue;
+				}
+
+				if ((entry == null) || (entry.templateHash == null)) {
+					logger.warn("Skipped line {} of {}: not a template entry (no templateHash).", lineNumber, filename);
 					continue;
 				}
 

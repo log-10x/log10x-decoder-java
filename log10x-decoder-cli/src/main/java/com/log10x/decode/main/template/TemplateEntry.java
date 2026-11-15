@@ -49,11 +49,23 @@ public class TemplateEntry {
 	 */
 	public static TemplateEntry fromJson(String s) {
 		try {
-			return mapper.readValue(s, TemplateEntry.class);
+			return parse(s);
 		} catch (JsonProcessingException e) {
 			logger.warn("Failed parsing TemplateEntry - {}", s, e);
 
 			return null;
 		}
+	}
+
+	/**
+	 * Parses one line of a templates file as {@link #fromJson(String)} does, but
+	 * throws instead of logging, so that the caller can name the line.
+	 *
+	 * @param s one JSON template entry
+	 * @return the entry; {@code null} when {@code s} is the JSON literal {@code null}
+	 * @throws JsonProcessingException when {@code s} is not a template entry
+	 */
+	static TemplateEntry parse(String s) throws JsonProcessingException {
+		return mapper.readValue(s, TemplateEntry.class);
 	}
 }
