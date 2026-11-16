@@ -19,8 +19,8 @@ import com.log10x.decode.options.TokenOptions;
 
 /**
  * A multi-line event's template joins its lines with the break each line was
- * read with: LF, CR LF, or a CR alone. A CR is template text, and a value slot
- * right before it is a slot. The template is the shape the engine writes for a
+ * read with: LF, CR LF, or a CR alone. A CR is template text and a delimiter: a
+ * value slot or a timestamp right before it ends there. The template is the shape the engine writes for a
  * Windows Security event with both kinds of CR.
  */
 class CarriageReturnTemplateTest {
@@ -40,5 +40,24 @@ class CarriageReturnTemplateTest {
 
 		assertEquals("<Data Name='AccessList'>%%4432\r\t\t\t\t%%4433\r\n\t\t\t\t</Data>\n<Data Name='AccessMask'>0x1</Data>"
 			+ System.lineSeparator(), new String(out.toByteArray(), StandardCharsets.UTF_8));
+	}
+
+	@Test
+	void timestampRightBeforeACr() {
+
+		java.util.Map<String, String> templates = new java.util.HashMap<>();
+
+		templates.put("crlf", "$ : $(yyyy-MM-dd'T'HH:mm:ss'Z')\r\nVersion : $");
+		templates.put("cr", "$ : $(yyyy-MM-dd'T'HH:mm:ss'Z')\rVersion : $");
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		assertTrue(StreamDecoder.decode(CONTEXT, new TemplateProvider(CONTEXT, templates),
+			new ByteArrayInputStream("~crlf,1488916587000,Last,4\n~cr,1488916587000,Last,4\n".getBytes(StandardCharsets.UTF_8)), out));
+
+		String nl = System.lineSeparator();
+
+		assertEquals("Last : 2017-03-07T19:56:27Z\r\nVersion : 4" + nl + "Last : 2017-03-07T19:56:27Z\rVersion : 4" + nl,
+			new String(out.toByteArray(), StandardCharsets.UTF_8));
 	}
 }

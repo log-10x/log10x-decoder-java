@@ -36,6 +36,7 @@ class TokenConsts {
 
 	protected static final char TAB = '\t';
 	protected static final char BREAK = '\n';
+	protected static final char CARRIAGE_RETURN = '\r';
 
 	protected static final String TOKEN_DELIMS = new String(new char[] {
 		LT_DELIM,
@@ -64,6 +65,7 @@ class TokenConsts {
 		DOLLAR_SIGN_DELIM,
 		TAB,
 		BREAK,
+		CARRIAGE_RETURN,
 		AT_DELIM,
 		PERCENT_DELIM
 	});
