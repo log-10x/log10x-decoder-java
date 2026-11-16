@@ -20,14 +20,14 @@ Java library and CLI tool for decoding [Log10x-encoded](https://doc.log10x.com/r
 <dependency>
     <groupId>com.log10x</groupId>
     <artifactId>log10x-decoder-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.log10x:log10x-decoder-core:1.0.0'
+implementation 'com.log10x:log10x-decoder-core:1.0.1'
 ```
 
 ## Usage
