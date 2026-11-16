@@ -101,26 +101,21 @@ public class TemplateLexer extends BaseLexer {
 		return true;
 	}
 
-	private boolean escapeChar(int offset) {
-
-		char c = chars[currCharIndex + offset];
-		return c == TemplateEncodeOptions.VAR_ESCAPE;
-	}
-
+	/**
+	 * A character is escaped when an odd number of escape characters runs up to
+	 * it: the template writes '/' as "//" and '$' as "/$", so "///$" is an
+	 * escaped '/' followed by an escaped '$' (the source text "/$"), not an
+	 * escaped '/' and a value slot.
+	 */
 	private boolean currCharEscaped() {
 
-		if ((currCharIndex > this.start + 1) &&
-			(escapeChar(-1)) && (!escapeChar(-2))) {
+		int run = 0;
 
-			return true;
-
-		} else if ((currCharIndex == this.start + 1) &&
-				   (escapeChar(-1))) {
-
-			return true;
+		for (int i = currCharIndex - 1; (i >= this.start) && (chars[i] == TemplateEncodeOptions.VAR_ESCAPE); i--) {
+			run++;
 		}
 
-		return false;
+		return (run % 2) == 1;
 	}
 
 	private TimestampTemplate getTimestamp() {
