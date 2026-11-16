@@ -42,6 +42,34 @@ public abstract class Timestamp {
 		return false;
 	}
 
+	/**
+	 * Returned by {@link #readEpoch} for a value it cannot read a time from.
+	 */
+	public static final long NO_EPOCH = -1;
+
+	/**
+	 * @return {@code true} when the event time of a slot of this pattern is read
+	 *         from the value text by {@link #readEpoch} instead of the lexer's
+	 *         default reading of an integer epoch.
+	 */
+	public boolean readsEpochFromText() {
+		return false;
+	}
+
+	/**
+	 * Reads the event time from the value text of a slot of this pattern. Only
+	 * called when {@link #readsEpochFromText()} is {@code true}.
+	 * 
+	 * @param chars the event's characters
+	 * @param start index of the value's first character
+	 * @param end   index after the value's last character
+	 * @return the time in milliseconds or nanoseconds since the epoch, or
+	 *         {@link #NO_EPOCH}
+	 */
+	public long readEpoch(char[] chars, int start, int end) {
+		return NO_EPOCH;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 
