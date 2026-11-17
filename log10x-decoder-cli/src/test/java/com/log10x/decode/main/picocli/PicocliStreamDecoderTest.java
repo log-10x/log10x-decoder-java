@@ -20,7 +20,7 @@ import picocli.CommandLine;
  * standard error captured: standard output carries only the decoded events,
  * diagnostics go to standard error, and the exit status is 0 when every line
  * was written (decoded, or as read when its template is missing), 1 when the
- * input cannot be read and 2 when the arguments are wrong.
+ * input or the templates file cannot be read and 2 when the arguments are wrong.
  */
 class PicocliStreamDecoderTest {
 
@@ -111,5 +111,43 @@ class PicocliStreamDecoderTest {
 
 		assertEquals(2, run("-f", "encoded.log"));
 		assertEquals("", this.out);
+	}
+
+	@Test
+	void unreadableTemplatesFileExitsWithOne() throws IOException {
+
+		Path input = write("encoded.log", "~h1,alice\n");
+
+		assertEquals(1, run(args(this.dir.resolve("absent.json"), input)));
+		assertEquals("", this.out);
+		assertTrue(this.err.contains("Cannot read the templates file"), this.err);
+
+		assertEquals(1, run(args(this.dir, input)));
+		assertEquals("", this.out);
+	}
+
+	/**
+	 * A line of the templates file that is not a template entry is skipped with
+	 * a warning that names it, and the templates after it are still loaded.
+	 */
+	@Test
+	void malformedTemplateLineIsSkippedAndTheRestIsRead() throws IOException {
+
+		Path templates = write("templates.json",
+			"{\"templateHash\":\"h1\",\"template\":\"user $ logged in\"}\n" +
+			"not a template\n" +
+			"\n" +
+			"{\"templateHash\":\"h2\",\"template\":\"order $ shipped\"}\n" +
+			"{\"templateHash\":\"h9\",\"templ\n" +
+			"{\"templateHash\":\"h3\",\"template\":\"item $ sold\"}\n");
+		Path input = write("encoded.log", "~h1,alice\n~h2,o-1\n~h3,i-7\n");
+
+		assertEquals(0, run(args(templates, input)));
+
+		assertEquals("user alice logged in" + NL + "order o-1 shipped" + NL + "item i-7 sold" + NL, this.out);
+
+		assertTrue(this.err.contains("Skipped line 2 of"), this.err);
+		assertTrue(this.err.contains("Skipped line 5 of"), this.err);
+		assertTrue(!this.err.contains("Skipped line 3 of"), this.err);
 	}
 }
