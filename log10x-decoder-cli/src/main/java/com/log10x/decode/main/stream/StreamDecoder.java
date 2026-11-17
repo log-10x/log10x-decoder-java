@@ -1,6 +1,7 @@
 package com.log10x.decode.main.stream;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,7 +52,9 @@ public class StreamDecoder {
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, Charset.defaultCharset()));
 				BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 
-			for (String line; (line = br.readLine()) != null;) {
+			StringBuilder buffer = new StringBuilder();
+
+			for (String line; (line = nextLine(br, buffer)) != null;) {
 
 				// A line that does not begin with the prefix is not encoded and passes through
 				// untouched (FORMAT_SPEC S4.1), with no template lookup and no warning.
@@ -97,6 +100,34 @@ public class StreamDecoder {
 			logger.error("Error while decoding.", e);
 			return false;
 		}
+	}
+
+	/**
+	 * Reads the next line, which ends at LF or at the end of the input. A CR is
+	 * part of the line: encoded lines are separated by LF, and a value can hold a
+	 * CR (FORMAT_SPEC S4.1), which {@link BufferedReader#readLine()} would take for
+	 * the end of the line.
+	 * 
+	 * @return the line without its LF, or {@code null} at the end of the input
+	 */
+	static String nextLine(BufferedReader reader, StringBuilder buffer) throws IOException {
+
+		buffer.setLength(0);
+
+		boolean read = false;
+
+		for (int c; (c = reader.read()) != -1;) {
+
+			read = true;
+
+			if (c == '\n') {
+				return buffer.toString();
+			}
+
+			buffer.append((char) c);
+		}
+
+		return read ? buffer.toString() : null;
 	}
 
 	private static String decodeLine(TokenizeContext context, TemplateProvider templateProvider, String hash,
