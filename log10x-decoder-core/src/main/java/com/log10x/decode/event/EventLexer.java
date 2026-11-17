@@ -121,6 +121,22 @@ public class EventLexer extends BaseLexer {
 		return timestampEpochs.get(index);
 	}
 
+	/**
+	 * Returns the encoded text of the timestamp of the provided index, as it
+	 * appears in the event's value list.
+	 * 
+	 * @param index the index of the timestamp
+	 * @return a new {@link CharArraySequence} over the timestamp's value text
+	 */
+	public CharArraySequence timestampText(int index) {
+		if ((index < 0) || (index >= timestampEpochs.size())) {
+			throw new ArrayIndexOutOfBoundsException(index);
+		}
+
+		// Timestamps are the first values of an event.
+		return varValue(index);
+	}
+
 	private void addTimestamp(int beginIndex, int endIndex) {
 
 		long epoch = LongUtil.parse(chars, beginIndex, endIndex, EMPTY_TIMESTAMP);

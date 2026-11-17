@@ -5,6 +5,7 @@ import java.io.Writer;
 
 import com.log10x.decode.event.EventLexer;
 import com.log10x.decode.timestamp.Timestamp;
+import com.log10x.decode.util.chars.CharArraySequence;
 import com.log10x.decode.util.ToString;
 
 /**
@@ -45,6 +46,15 @@ public class TimestampSegment extends Segment {
 
 	@Override
 	public void write(Writer writer, EventLexer eventLexer) throws IOException {
+
+		if (this.timestamp.writesValueText()) {
+			CharArraySequence text = eventLexer.timestampText(timestampIndex);
+
+			writer.write(text.array(), text.start(), text.length());
+
+			return;
+		}
+
 		long epoch = eventLexer.timestampEpoch(timestampIndex);
 
 		this.timestamp.format(epoch, writer);

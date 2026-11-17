@@ -12,6 +12,16 @@ abstract class EpochTimestamp extends Timestamp {
 		super(pattern);
 	}
 
+	/**
+	 * An epoch pattern ({@code +%s}, {@code +%s.%N}, {@code epoch},
+	 * {@code epochNano}) carries the epoch text the encoder read, which a decoder
+	 * writes back unchanged.
+	 */
+	@Override
+	public boolean writesValueText() {
+		return true;
+	}
+
 	@Override
 	public void format(long epoch, Writer writer) {
 		try {
