@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.log10x.decode.timestamp.FormatterTimestamp;
 import com.log10x.decode.timestamp.Timestamp;
+import com.log10x.decode.timestamp.epoch.EpochFractionTimestamp;
 import com.log10x.decode.timestamp.epoch.EpochMilliTimestamp;
 import com.log10x.decode.timestamp.epoch.EpochNanoTimestamp;
 import com.log10x.decode.util.ToString;
@@ -114,8 +115,13 @@ public class TimestampOptions {
 		}
 
 		String patternStr = pattern.asString();
-		if (patternStr.equals("+%s") || patternStr.equals("+%s.%N")) {
+		if (patternStr.equals("+%s")) {
 			return new EpochMilliTimestamp(patternStr);
+		}
+
+		if (patternStr.equals(EpochFractionTimestamp.MILLIS_FRACTION) ||
+			patternStr.equals(EpochFractionTimestamp.SECONDS_FRACTION)) {
+			return new EpochFractionTimestamp(patternStr);
 		}
 
 		FormatterTimestamp existing = patternsMap.get(pattern);

@@ -11,6 +11,8 @@ import com.log10x.decode.lexer.TokenType;
 import com.log10x.decode.lexer.TokenizeContext;
 import com.log10x.decode.template.Template;
 import com.log10x.decode.template.segment.Segment;
+import com.log10x.decode.template.segment.TimestampSegment;
+import com.log10x.decode.timestamp.Timestamp;
 import com.log10x.decode.util.LongUtil;
 import com.log10x.decode.util.StringUtil;
 import com.log10x.decode.util.chars.CharArraySequence;
@@ -30,6 +32,7 @@ public class EventLexer extends BaseLexer {
 	
 	private final Template template;
 	private final List<Long> timestampEpochs;
+	private final Timestamp[] slotTimestamps;
 
 	/**
 	 * Constructs a new {@link EventLexer}
@@ -44,6 +47,33 @@ public class EventLexer extends BaseLexer {
 
 		this.template = template;
 		this.timestampEpochs = new ArrayList<>();
+		this.slotTimestamps = slotTimestamps(template);
+	}
+
+	/**
+	 * The pattern of each timestamp slot, by timestamp index, so a value whose
+	 * pattern reads its own time (an epoch with a fraction) is read by it.
+	 */
+	private static Timestamp[] slotTimestamps(Template template) {
+
+		Timestamp[] result = new Timestamp[template.timestampSize()];
+
+		for (int i = 0; i < template.segmentSize(); i++) {
+
+			Segment segment = template.segment(i);
+
+			if (segment instanceof TimestampSegment) {
+
+				TimestampSegment timestampSegment = (TimestampSegment) segment;
+				int index = timestampSegment.timestampIndex();
+
+				if ((index >= 0) && (index < result.length) && (result[index] == null)) {
+					result[index] = timestampSegment.timestamp();
+				}
+			}
+		}
+
+		return result;
 	}
 
 	@Override
@@ -138,6 +168,19 @@ public class EventLexer extends BaseLexer {
 	}
 
 	private void addTimestamp(int beginIndex, int endIndex) {
+
+		int index = timestampEpochs.size();
+
+		if ((index < slotTimestamps.length) &&
+			(slotTimestamps[index] != null) &&
+			(slotTimestamps[index].readsEpochFromText())) {
+
+			long epoch = slotTimestamps[index].readEpoch(chars, beginIndex, endIndex);
+
+			timestampEpochs.add((epoch == Timestamp.NO_EPOCH) ? EMPTY_TIMESTAMP : epoch);
+
+			return;
+		}
 
 		long epoch = LongUtil.parse(chars, beginIndex, endIndex, EMPTY_TIMESTAMP);
 

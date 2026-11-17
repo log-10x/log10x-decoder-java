@@ -44,6 +44,13 @@ public class TimestampSegment extends Segment {
 		return this.timestampIndex;
 	}
 
+	/**
+	 * @return The {@link Timestamp} pattern of this segment.
+	 */
+	public Timestamp timestamp() {
+		return this.timestamp;
+	}
+
 	@Override
 	public void write(Writer writer, EventLexer eventLexer) throws IOException {
 
