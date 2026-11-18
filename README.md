@@ -50,11 +50,13 @@ String decoded = SingleEventDecoder.decode(
 
 ```bash
 # Decode a file
-log10x-decode -t templates.json -f encoded.log -o decoded.log
+log10x-decode -t templates.json -d , -p '~' -f encoded.log -o decoded.log
 
 # Decode from stdin
-cat encoded.log | log10x-decode -t templates.json
+cat encoded.log | log10x-decode -t templates.json -d , -p '~'
 ```
+
+`-d ,` and `-p '~'` match the engine's compact lines. With the prefix set, a line that does not begin with `~` is written as read: a compact stream can hold events its encoder sent as their own text, and they pass through untouched.
 
 ## Building from Source
 
