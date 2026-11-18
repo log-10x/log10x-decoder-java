@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.log10x.decode.lexer.TokenizeContext;
 import com.log10x.decode.template.Template;
 import com.log10x.decode.template.TemplateLexer;
-import com.log10x.decode.util.StringUtil;
 
 /**
  * Class for providing a cached access to {@link Template} objects.
@@ -84,10 +83,15 @@ public class TemplateProvider {
 	private Template createTemplate(String hash) {
 		String rawTemplate = rawTemplates.get(hash);
 
-		if (StringUtil.isNullOrEmpty(rawTemplate)) {
+		if ((rawTemplate == null) && (!rawTemplates.containsKey(hash))) {
 			logger.warn("No raw template found for {}.", hash);
 
 			return null;
+		}
+
+		// An empty event's template is empty: its record holds no text (null)
+		if (rawTemplate == null) {
+			rawTemplate = "";
 		}
 
 		try {
